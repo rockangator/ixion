@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock F — GMU pilot geofence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="mocks-shared.css" />
+    <style>
+      .page {
+        min-height: 100vh;
+        background: var(--cream-page);
+        padding: 0 0 32px;
+      }
+      .head {
+        padding: 18px 20px 12px;
+        background: var(--apm-header);
+        border-bottom: 1px solid var(--border);
+      }
+      .head h1 {
+        font-family: var(--font-display);
+        color: var(--forest);
+        font-size: 1.35rem;
+        margin: 0 0 6px;
+      }
+      .head p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        max-width: 62ch;
+        line-height: 1.45;
+      }
+      .map-card {
+        max-width: 920px;
+        margin: 20px auto 0;
+        padding: 0 16px;
+      }
+      .map-inner {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      svg.map {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: linear-gradient(180deg, #dceee7 0%, #c5dfd6 55%, #b8d4cb 100%);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 22px;
+        padding: 14px 18px;
+        background: var(--cream-card);
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+        color: var(--forest);
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+      }
+      .swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 66, 54, 0.2);
+      }
+      .note {
+        max-width: 920px;
+        margin: 14px auto 0;
+        padding: 0 16px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="concept-ribbon"><span>Story map — not to scale · concept only</span></div>
+    <div class="page">
+      <div class="head">
+        <h1>George Mason University · Pilot geofence v1</h1>
+        <p>
+          Main campus core (Fairfax): sidewalk-first ODD, single MFC staging node, shaded areas = robot-eligible delivery today. Aerial beta
+          uses cleared pads only (not the full shaded hull).
+        </p>
+      </div>
+      <div class="map-card">
+        <div class="map-inner">
+          <svg class="map" viewBox="0 0 800 520" role="img" aria-label="Stylized GMU campus map with geofence">
+            <!-- Outer context -->
+            <text x="24" y="34" fill="rgba(0,66,54,0.45)" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="700">
+              Fairfax, VA · campus schematic
+            </text>
+            <!-- Campus boundary -->
+            <path
+              d="M 120 380 L 520 360 L 680 200 L 620 80 L 280 100 Z"
+              fill="rgba(249,243,231,0.45)"
+              stroke="rgba(0,66,54,0.35)"
+              stroke-width="3"
+              stroke-dasharray="8 8"
+            />
+            <text x="130" y="370" fill="rgba(0,66,54,0.5)" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="600">
+              Campus boundary
+            </text>
+            <!-- Eligible zones -->
+            <path
+              d="M 200 300 L 420 290 L 520 210 L 480 140 L 260 150 Z"
+              fill="rgba(0, 66, 54, 0.18)"
+              stroke="rgba(0, 66, 54, 0.45)"
+              stroke-width="2"
+            />
+            <path
+              d="M 430 320 L 560 300 L 600 220 L 500 240 Z"
+              fill="rgba(248, 130, 30, 0.2)"
+              stroke="rgba(248, 130, 30, 0.65)"
+              stroke-width="2"
+            />
+            <!-- Paths -->
+            <path
+              d="M 260 320 C 320 280 360 260 410 250 C 460 240 500 230 540 220"
+              fill="none"
+              stroke="rgba(255,255,255,0.75)"
+              stroke-width="5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 260 320 C 300 340 340 300 400 295"
+              fill="none"
+              stroke="rgba(255,255,255,0.55)"
+              stroke-width="4"
+              stroke-dasharray="6 10"
+              stroke-linecap="round"
+            />
+            <!-- Buildings abstract -->
+            <rect x="300" y="160" width="90" height="60" rx="6" fill="rgba(255,255,255,0.5)" stroke="rgba(0,66,54,0.15)" />
+            <rect x="440" y="250" width="70" height="48" rx="6" fill="rgba(255,255,255,0.45)" stroke="rgba(0,66,54,0.15)" />
+            <rect x="250" y="200" width="55" height="40" rx="6" fill="rgba(255,255,255,0.4)" stroke="rgba(0,66,54,0.12)" />
+            <!-- MFC node -->
+            <g transform="translate(320 268)">
+              <rect x="-36" y="-24" width="72" height="48" rx="8" fill="var(--forest)" />
+              <text x="0" y="4" text-anchor="middle" fill="#fff" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="800">
+                MFC
+              </text>
+              <text x="0" y="42" text-anchor="middle" fill="rgba(0,66,54,0.75)" font-family="Source Sans 3, sans-serif" font-size="10" font-weight="700">
+                Staging dock
+              </text>
+            </g>
+            <!-- Aerial pad marker -->
+            <g transform="translate(545 215)">
+              <polygon points="0,-12 12,10 -12,10" fill="var(--carrot)" stroke="#fff" stroke-width="2" />
+              <text x="0" y="28" text-anchor="middle" fill="rgba(0,66,54,0.8)" font-family="Source Sans 3, sans-serif" font-size="10" font-weight="700">
+                Aerial pad (beta)
+              </text>
+            </g>
+            <!-- Labels -->
+            <text x="210" y="285" fill="rgba(0,66,54,0.75)" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="700">
+              Johnson Center adj.
+            </text>
+            <text x="470" y="335" fill="rgba(0,66,54,0.7)" font-family="Source Sans 3, sans-serif" font-size="11" font-weight="600">
+              South residences
+            </text>
+            <!-- North arrow -->
+            <g transform="translate(720 70)">
+              <line x1="0" y1="30" x2="0" y2="0" stroke="rgba(0,66,54,0.5)" stroke-width="2" />
+              <polygon points="0,0 -6,12 6,12" fill="rgba(0,66,54,0.55)" />
+              <text x="10" y="22" fill="rgba(0,66,54,0.55)" font-family="Source Sans 3, sans-serif" font-size="10" font-weight="700">N</text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span><span class="swatch" style="background: rgba(0,66,54,0.22)"></span>Robot-eligible (v1)</span>
+            <span><span class="swatch" style="background: rgba(248,130,30,0.35)"></span>Aerial beta corridor subset</span>
+            <span><span class="swatch" style="background: var(--forest)"></span>MFC / handoff node</span>
+            <span><span class="swatch" style="background: var(--carrot)"></span>Landing pad</span>
+          </div>
+        </div>
+      </div>
+      <p class="note">
+        For deck export: use browser screenshot or print-to-PDF on this page. Eligibility still enforced in product by address + basket rules
+        (see checkout mock).
+      </p>
+    </div>
+  </body>
+</html>

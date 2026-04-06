@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock C — Dock handoff console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="mocks-shared.css" />
+    <style>
+      body {
+        background: #f3f3f2;
+      }
+      .frame {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 20px 18px 40px;
+      }
+      header.page {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      header.page h1 {
+        font-family: var(--font-display);
+        color: var(--forest);
+        font-size: 1.5rem;
+        margin: 0;
+      }
+      .env {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 16px;
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 18px 18px 16px;
+        box-shadow: var(--shadow);
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      dl.fields {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 8px 14px;
+        margin: 0;
+        font-size: 14px;
+      }
+      dl.fields dt {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      dl.fields dd {
+        margin: 0;
+        color: var(--text-body);
+        font-weight: 600;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(0, 66, 54, 0.08);
+        color: var(--forest);
+      }
+      .pill.ok {
+        background: rgba(0, 120, 85, 0.12);
+        color: #006b4f;
+      }
+      .pill.warn {
+        background: rgba(248, 130, 30, 0.15);
+        color: #8f4a0f;
+      }
+      .chain {
+        margin-top: 8px;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 12px 0;
+        border-top: 1px solid var(--border);
+      }
+      .step:first-child {
+        border-top: none;
+      }
+      .idx {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--forest);
+        color: var(--white);
+        font-size: 12px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .idx.pending {
+        background: rgba(0, 66, 54, 0.15);
+        color: var(--forest);
+      }
+      .step-body strong {
+        display: block;
+        font-size: 14px;
+        color: var(--forest);
+      }
+      .step-body span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .scan-box {
+        border: 2px dashed rgba(0, 66, 54, 0.25);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 10px;
+        background: var(--cream-page);
+      }
+      .scan-box strong {
+        color: var(--forest);
+      }
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .btn {
+        font-family: var(--font-ui);
+        font-weight: 700;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .btn-primary {
+        background: var(--forest);
+        color: var(--white);
+      }
+      .btn-secondary {
+        background: var(--white);
+        color: var(--forest);
+        border: 1px solid var(--border);
+      }
+      .audits {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 12px;
+        line-height: 1.45;
+      }
+      .split {
+        height: 3px;
+        background: var(--carrot);
+        width: 36px;
+        border-radius: 2px;
+        margin-bottom: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="concept-ribbon"><span>Marshal tablet · staging dock · concept UI</span></div>
+    <div class="frame">
+      <header class="page">
+        <div>
+          <h1>Handoff — Dock B</h1>
+          <p class="env">GMU pilot · MFC lane 1 · Local time 2:08 PM</p>
+        </div>
+        <span class="pill ok">Custody: pre-release</span>
+      </header>
+      <div class="grid">
+        <div class="card">
+          <div class="split"></div>
+          <h2>Load &amp; vehicle</h2>
+          <dl class="fields">
+            <dt>Order ID</dt>
+            <dd>IC-8K2M · Batch A-104</dd>
+            <dt>Assigned vehicle</dt>
+            <dd>Rover Fairfax-07 <span class="pill" style="margin-left: 6px">Ground</span></dd>
+            <dt>Dock bay</dt>
+            <dd>B-7 · Charged 94%</dd>
+            <dt>Depart window</dt>
+            <dd>2:14–2:24 PM <span style="font-weight: 500; color: var(--muted)">(SLA −6 min)</span></dd>
+            <dt>Seal scan</dt>
+            <dd><span class="pill ok">Verified 2:07 PM</span> Temp chain OK</dd>
+            <dt>Picker</dt>
+            <dd>M. Alvarez <span style="font-weight: 500; color: var(--muted)">· loader acknowledged 2:06 PM</span></dd>
+          </dl>
+          <div class="scan-box"><strong>Seal ID QR-19F3</strong> matched crate weight · tamper loop closed</div>
+        </div>
+        <div class="card">
+          <h2>Custody chain</h2>
+          <p style="margin: 0 0 4px; font-size: 13px; color: var(--muted); line-height: 1.45">
+            Two-person rule: picker loads → marshal confirms → vehicle releases. No skip steps.
+          </p>
+          <div class="chain">
+            <div class="step">
+              <div class="idx">1</div>
+              <div class="step-body">
+                <strong>Picker load complete</strong>
+                <span>Bags secured · latches checked · photo optional per SOP v3</span>
+              </div>
+              <span class="pill ok">Done</span>
+            </div>
+            <div class="step">
+              <div class="idx">2</div>
+              <div class="step-body">
+                <strong>Marshal bay confirm</strong>
+                <span>Match vehicle + bay + order · visual seal pass</span>
+              </div>
+              <span class="pill ok">Done</span>
+            </div>
+            <div class="step">
+              <div class="idx pending">3</div>
+              <div class="step-body">
+                <strong>Release rover</strong>
+                <span>Mission arms only after marshal tap — remote support on channel GMU-1</span>
+              </div>
+              <span class="pill warn">Pending</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-primary">Confirm release to mission</button>
+            <button type="button" class="btn btn-secondary">Hold — exception checklist</button>
+          </div>
+          <p class="audits">
+            Audit hash <code style="font-size: 11px">a7b2…e4c1</code> · If release blocked &gt;120s, auto-notify fleet lead + customer ETA refresh.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock D — Fleet ops · GMU control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="mocks-shared.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --shell: #e4e2de;
+        --chrome: #fbfaf8;
+        --line: rgba(0, 66, 54, 0.14);
+        --ink: #1a1a1a;
+        --mono: "IBM Plex Mono", ui-monospace, monospace;
+      }
+      body {
+        background: var(--shell);
+        margin: 0;
+        color: var(--ink);
+        font-family: var(--font-ui);
+      }
+      .concept-ribbon {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .shell {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 0 40px;
+      }
+      .topbar {
+        background: var(--forest);
+        color: var(--white);
+        padding: 10px 18px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 20px;
+        font-size: 12px;
+        justify-content: space-between;
+      }
+      .topbar strong {
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .pill {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        padding: 4px 11px;
+        font-weight: 600;
+        font-size: 11px;
+      }
+      .pill em {
+        font-style: normal;
+        color: rgba(255, 255, 255, 0.88);
+      }
+      .asof {
+        font-family: var(--mono);
+        font-size: 11px;
+        opacity: 0.92;
+      }
+      .subbar {
+        background: var(--chrome);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .subbar h1 {
+        font-family: var(--font-display);
+        color: var(--forest);
+        font-size: 1.35rem;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .subbar .meta {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        margin: 4px 0 0;
+      }
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .filters button,
+      .filters select {
+        font-family: var(--font-ui);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        color: var(--forest);
+        cursor: default;
+      }
+      .filters select {
+        appearance: none;
+        padding-right: 28px;
+        background-image: linear-gradient(45deg, transparent 50%, var(--forest) 50%),
+          linear-gradient(135deg, var(--forest) 50%, transparent 50%);
+        background-position: calc(100% - 14px) calc(50% + 2px), calc(100% - 9px) calc(50% + 2px);
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+      }
+      .dash-body {
+        padding: 16px 18px 0;
+        display: grid;
+        gap: 14px;
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        gap: 10px;
+      }
+      @media (max-width: 1200px) {
+        .kpis {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .kpis {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .kpi {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 11px 12px 9px;
+        box-shadow: 0 6px 18px rgba(0, 66, 54, 0.04);
+      }
+      .kpi .lab {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 800;
+      }
+      .kpi .val {
+        font-family: var(--mono);
+        font-size: 1.28rem;
+        font-weight: 600;
+        color: var(--forest);
+        margin-top: 4px;
+      }
+      .kpi .sub {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 3px;
+        font-weight: 600;
+      }
+      .delta {
+        font-size: 10px;
+        font-weight: 700;
+        margin-left: 6px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        vertical-align: middle;
+      }
+      .delta.up {
+        background: rgba(0, 163, 108, 0.12);
+        color: #006b4a;
+      }
+      .delta.down {
+        background: rgba(200, 60, 40, 0.1);
+        color: #a33a2a;
+      }
+      .delta.flat {
+        background: rgba(0, 66, 54, 0.08);
+        color: var(--forest);
+      }
+      .grid-main {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 14px;
+        align-items: start;
+      }
+      @media (max-width: 1100px) {
+        .grid-main {
+          grid-template-columns: 1fr;
+        }
+      }
+      .panel {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 66, 54, 0.04);
+      }
+      .panel-h {
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: linear-gradient(180deg, #fffdf9 0%, #fff 100%);
+      }
+      .panel-h h2 {
+        margin: 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        font-weight: 900;
+      }
+      .panel-h .hint {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .chart-wrap {
+        padding: 8px 12px 12px;
+        height: 240px;
+      }
+      .chart-wrap.half {
+        height: 200px;
+      }
+      .split-charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border-top: 1px solid var(--line);
+      }
+      @media (max-width: 700px) {
+        .split-charts {
+          grid-template-columns: 1fr;
+        }
+      }
+      .split-charts .chart-cell {
+        padding: 8px 12px 12px;
+        border-right: 1px solid var(--line);
+        min-height: 210px;
+      }
+      .split-charts .chart-cell:last-child {
+        border-right: none;
+      }
+      table.data {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+      table.data th {
+        text-align: left;
+        padding: 8px 12px;
+        background: rgba(0, 66, 54, 0.05);
+        color: var(--forest);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--line);
+      }
+      table.data td {
+        padding: 9px 12px;
+        border-bottom: 1px solid rgba(0, 66, 54, 0.07);
+        vertical-align: top;
+      }
+      table.data tr:last-child td {
+        border-bottom: none;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 11px;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tag.p1 {
+        background: rgba(248, 130, 30, 0.2);
+        color: #8f4a0f;
+      }
+      .tag.p2 {
+        background: rgba(0, 66, 54, 0.1);
+        color: var(--forest);
+      }
+      .tag.p3 {
+        background: rgba(180, 40, 40, 0.12);
+        color: #8f2323;
+      }
+      .tag.ok {
+        background: rgba(0, 163, 108, 0.14);
+        color: #005f45;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .mini-map {
+        padding: 12px 14px 14px;
+        background: linear-gradient(145deg, #dceee7, #c2dfd4);
+        border-bottom: 1px solid var(--line);
+        position: relative;
+        min-height: 120px;
+      }
+      .mini-map svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .weather {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 14px;
+        font-size: 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--apm-header);
+      }
+      .weather strong {
+        color: var(--forest);
+      }
+      .bat {
+        padding: 10px 14px 12px;
+      }
+      .bat h3 {
+        margin: 0 0 8px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 900;
+      }
+      .bat-row {
+        display: grid;
+        grid-template-columns: 56px 1fr 52px 44px;
+        gap: 8px;
+        align-items: center;
+        font-size: 11px;
+        padding: 6px 0;
+        border-top: 1px solid rgba(0, 66, 54, 0.07);
+      }
+      .bat-row:first-of-type {
+        border-top: none;
+      }
+      .bar {
+        height: 7px;
+        background: rgba(0, 66, 54, 0.1);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--forest), var(--carrot));
+      }
+      .sla {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted);
+        text-align: right;
+      }
+      .zones {
+        padding: 0;
+      }
+      .zones table.data td:first-child {
+        font-weight: 700;
+        color: var(--forest);
+      }
+      .footer-note {
+        padding: 12px 18px 0;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="concept-ribbon"><span>Partner dispatch console · synthetic data · GMU pilot</span></div>
+    <div class="shell">
+      <div class="topbar">
+        <div class="pill-row">
+          <strong>INSTACART · AUTONOMY DISPATCH</strong>
+          <span class="pill">Env <em>prod-pilot</em></span>
+          <span class="pill">Region <em>IAD · campus</em></span>
+          <span class="pill">Vendor mix <em>ST ★ WING-β</em></span>
+        </div>
+        <span class="asof">SNAPSHOT · 2026-04-04 14:16:08 EDT · shift B</span>
+      </div>
+      <div class="subbar">
+        <div>
+          <h1>GMU Fairfax · Fleet &amp; corridor health</h1>
+          <p class="meta">Limited beta (D32–D58) · Ground primary · Aerial ≤20% · Human relay queue staffed ×2</p>
+        </div>
+        <div class="filters">
+          <select disabled title="Static mock">
+            <option>Geofence v1.3 (signed MOU)</option>
+          </select>
+          <select disabled>
+            <option>MFC node · Johnson adjacency</option>
+          </select>
+          <button type="button" disabled>Export CSV</button>
+          <button type="button" disabled>Open runbook</button>
+        </div>
+      </div>
+
+      <div class="dash-body">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="lab">Assets in mission</div>
+            <div class="val">11 <span class="delta up">+2 vs hr</span></div>
+            <div class="sub">7 sidewalk · 1 charge · 1 aerial beta · 2 staged</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">On-time (p90 arrival)</div>
+            <div class="val">78.4% <span class="delta up">+1.1 d/d</span></div>
+            <div class="sub">Target D60 ≥75% · Corridor hold 0 active</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Intervention queue</div>
+            <div class="val">3 <span class="delta flat">SLA</span></div>
+            <div class="sub">2 reroute · 1 comms check · 0 e-stop</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Missions / hr (rolling)</div>
+            <div class="val">23.1 <span class="delta down">−2.4</span></div>
+            <div class="sub">Lunch trough · Fri baseline 25–28</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">AOV pilot (fulfilled)</div>
+            <div class="val">$36.80</div>
+            <div class="sub">Robot-eligible subset · exc. alcohol</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Fully loaded CPD</div>
+            <div class="val">$11.40</div>
+            <div class="sub">Partner + hub + margin placeholder</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Contact rate (7d)</div>
+            <div class="val">11.8% <span class="delta up">ok</span></div>
+            <div class="sub">Goal ≤15% · down-tier from chat leaks</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Handoff p95 (picker→AV)</div>
+            <div class="val">3m 10s</div>
+            <div class="sub">Bay B · seal scan SLO 120s</div>
+          </div>
+        </div>
+
+        <div class="grid-main">
+          <div class="panel">
+            <div class="panel-h">
+              <h2>Throughput &amp; reliability</h2>
+              <span class="hint">Local TZ · trips completed (15-min buckets, today)</span>
+            </div>
+            <div class="chart-wrap"><canvas id="ch-throughput"></canvas></div>
+            <div class="split-charts">
+              <div class="chart-cell">
+                <div class="panel-h" style="border: none; padding: 8px 12px 0">
+                  <h2>Exception mix (7d)</h2>
+                  <span class="hint">% of trips</span>
+                </div>
+                <div class="chart-wrap half"><canvas id="ch-exceptions"></canvas></div>
+              </div>
+              <div class="chart-cell">
+                <div class="panel-h" style="border: none; padding: 8px 12px 0">
+                  <h2>On-time trend</h2>
+                  <span class="hint">Rolling 7d</span>
+                </div>
+                <div class="chart-wrap half"><canvas id="ch-ontime"></canvas></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="panel">
+              <div class="panel-h">
+                <h2>Live intervention queue</h2>
+                <span class="hint">Operator SLA 4:00</span>
+              </div>
+              <table class="data" aria-label="Interventions">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Asset</th>
+                    <th>State</th>
+                    <th>Clock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">INC-1842</td>
+                    <td class="mono">SSF-FVX-07</td>
+                    <td>
+                      <span class="tag p1">Reroute</span><br /><span style="color: var(--muted); font-weight: 600">Crowd density @ Oak</span>
+                    </td>
+                    <td class="mono">03:12</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">INC-1840</td>
+                    <td class="mono">SSF-FVX-04</td>
+                    <td><span class="tag p2">C2 ping</span><br /><span style="color: var(--muted); font-weight: 600">Heartbeat jitter</span></td>
+                    <td class="mono">01:48</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">INC-1838</td>
+                    <td class="mono">WING-β1</td>
+                    <td><span class="tag p3">Pad hold</span><br /><span style="color: var(--muted); font-weight: 600">Wind gust advisory</span></td>
+                    <td class="mono">00:55</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="panel">
+              <div class="panel-h">
+                <h2>Asset roster (air + ground)</h2>
+                <span class="hint">Mission + SOC</span>
+              </div>
+              <table class="data">
+                <thead>
+                  <tr>
+                    <th>Unit</th>
+                    <th>Mission</th>
+                    <th>SOC</th>
+                    <th>HB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono">SSF-FVX-07</td>
+                    <td><span class="tag ok">En route</span> IC-8K2M</td>
+                    <td>89%</td>
+                    <td class="mono">14s</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">SSF-FVX-02</td>
+                    <td><span class="tag ok">En route</span> IC-K9P1</td>
+                    <td>61%</td>
+                    <td class="mono">22s</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">SSF-FVX-11</td>
+                    <td><span class="tag p2">Stage</span> Bay B-4</td>
+                    <td>96%</td>
+                    <td class="mono">08s</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">WING-β1</td>
+                    <td><span class="tag p2">Loiter</span> Pad-N</td>
+                    <td>79%</td>
+                    <td class="mono">41s</td>
+                  </tr>
+                  <tr>
+                    <td class="mono">RELAY-H3</td>
+                    <td><span class="tag p1">Standby</span> Human relay</td>
+                    <td>—</td>
+                    <td class="mono">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="panel zones">
+              <div class="panel-h">
+                <h2>Corridor / pad readiness</h2>
+                <span class="hint">Traffic + weather composite</span>
+              </div>
+              <div class="mini-map">
+                <svg viewBox="0 0 320 110" role="img" aria-label="Schematic geofence health">
+                  <rect x="2" y="8" width="316" height="94" rx="10" fill="rgba(255,255,255,0.55)" stroke="rgba(0,66,54,0.2)" />
+                  <path
+                    d="M 40 80 L 120 75 L 210 48 L 270 60 L 285 30"
+                    fill="none"
+                    stroke="rgba(0,66,54,0.35)"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="132" cy="73" r="5" fill="#00a36c" />
+                  <circle cx="232" cy="50" r="5" fill="#f8821e" />
+                  <text x="12" y="26" fill="rgba(0,66,54,0.55)" font-size="10" font-weight="700" font-family="Source Sans 3, sans-serif">
+                    North quad · OK
+                  </text>
+                  <text x="12" y="42" fill="rgba(0,66,54,0.55)" font-size="10" font-weight="700" font-family="Source Sans 3, sans-serif">
+                    Oak crossing · caution
+                  </text>
+                  <text x="190" y="100" fill="rgba(0,66,54,0.45)" font-size="9" font-weight="600" font-family="Source Sans 3, sans-serif">
+                    MFC dock queue +1m
+                  </text>
+                </svg>
+              </div>
+              <div class="weather">
+                <strong>NOAA feed</strong>
+                <span
+                  >44°F · NW 8kt · precip 0% · <span style="color: var(--muted)">De-rate: none · Drone pad gust watch until 15:30</span></span
+                >
+              </div>
+              <div class="bat">
+                <h3>Battery · swap candidates</h3>
+                <div class="bat-row">
+                  <span class="mono">SSF-02</span>
+                  <div class="bar"><i style="width: 61%"></i></div>
+                  <span>61%</span>
+                  <span class="sla">ETA 19m</span>
+                </div>
+                <div class="bat-row">
+                  <span class="mono">SSF-07</span>
+                  <div class="bar"><i style="width: 89%"></i></div>
+                  <span>89%</span>
+                  <span class="sla">—</span>
+                </div>
+                <div class="bat-row">
+                  <span class="mono">WING-β1</span>
+                  <div class="bar"><i style="width: 79%"></i></div>
+                  <span>79%</span>
+                  <span class="sla">RTL 6m</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="footer-note">
+          Numbers are illustrative for APM review. Naming pattern mirrors partner-visible IDs (not a live system). Correlates to order IC-8K2M in tracking mocks for narrative continuity.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const forest = "#004236";
+        const carrot = "#f8821e";
+        const mutedGrid = "rgba(0,66,54,0.06)";
+        const font = { family: "'Source Sans 3', sans-serif", size: 11 };
+
+        const ctx1 = document.getElementById("ch-throughput");
+        new Chart(ctx1, {
+          type: "bar",
+          data: {
+            labels: ["11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00"],
+            datasets: [
+              {
+                label: "Ground completed",
+                data: [12, 18, 21, 25, 34, 29, 27, 31, 28, 22, 19, 21, 17],
+                backgroundColor: "rgba(0, 66, 54, 0.78)",
+                borderRadius: 4,
+                maxBarThickness: 14,
+              },
+              {
+                label: "Aerial beta",
+                data: [0, 0, 1, 1, 2, 2, 1, 2, 1, 1, 1, 0, 1],
+                backgroundColor: "rgba(248, 130, 30, 0.85)",
+                borderRadius: 4,
+                maxBarThickness: 14,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { font, color: "#1a1a1a" } } },
+            scales: {
+              x: { stacked: true, grid: { display: false }, ticks: { font, color: forest } },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                grid: { color: mutedGrid },
+                ticks: { font, color: forest, stepSize: 10 },
+              },
+            },
+          },
+        });
+
+        const ctx2 = document.getElementById("ch-exceptions");
+        new Chart(ctx2, {
+          type: "doughnut",
+          data: {
+            labels: ["Clean", "Robot pause", "Not home", "C2 / link", "Pad weather"],
+            datasets: [
+              {
+                data: [91.4, 3.1, 2.6, 1.9, 1.0],
+                backgroundColor: [forest, carrot, "#5a7d76", "#c75a3a", "#7e6faf"],
+                borderWidth: 1,
+                borderColor: "#fff",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font, color: "#1a1a1a" } } },
+          },
+        });
+
+        const ctx3 = document.getElementById("ch-ontime");
+        new Chart(ctx3, {
+          type: "line",
+          data: {
+            labels: ["D-6", "D-5", "D-4", "D-3", "D-2", "D-1", "Today"],
+            datasets: [
+              {
+                label: "On-time %",
+                data: [72.1, 73.4, 74.0, 75.2, 76.0, 77.3, 78.4],
+                borderColor: forest,
+                backgroundColor: "rgba(0,66,54,0.1)",
+                fill: true,
+                tension: 0.35,
+                pointRadius: 3,
+              },
+              {
+                label: "Target",
+                data: [75, 75, 75, 75, 75, 75, 75],
+                borderColor: carrot,
+                borderDash: [4, 4],
+                fill: false,
+                tension: 0,
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { font, color: "#1a1a1a" } } },
+            scales: {
+              x: { grid: { display: false }, ticks: { font, color: forest } },
+              y: {
+                min: 68,
+                max: 82,
+                grid: { color: mutedGrid },
+                ticks: { font, color: forest, callback: (v) => v + "%" },
+              },
+            },
+          },
+        });
+      })();
+    </script>
+  </body>
+</html>

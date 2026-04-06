@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mock E — Robot paused · Recovery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="mocks-shared.css" />
+    <style>
+      main {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        background: linear-gradient(180deg, var(--cream-page) 0%, #e8f0ed 100%);
+      }
+      .phone {
+        width: 100%;
+        max-width: 400px;
+        background: var(--white);
+        border-radius: 22px;
+        box-shadow: var(--shadow), 0 0 0 1px var(--border);
+        overflow: hidden;
+      }
+      .status {
+        padding: 12px 16px;
+        background: var(--forest);
+        color: var(--white);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .body {
+        padding: 22px 20px 26px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #8f4a0f;
+        background: rgba(248, 130, 30, 0.14);
+        padding: 6px 10px;
+        border-radius: 999px;
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-family: var(--font-display);
+        color: var(--forest);
+        font-size: 1.35rem;
+        margin: 0 0 12px;
+        line-height: 1.25;
+      }
+      .card {
+        background: var(--cream-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 16px 16px 14px;
+        margin-top: 8px;
+      }
+      .card p {
+        margin: 0 0 10px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--text-body);
+      }
+      .card p:last-of-type {
+        margin-bottom: 0;
+      }
+      .label {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .eta-big {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--forest);
+        margin-top: 6px;
+      }
+      .btn {
+        width: 100%;
+        margin-top: 18px;
+        font-family: var(--font-ui);
+        font-weight: 700;
+        font-size: 15px;
+        padding: 14px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--forest);
+        color: var(--white);
+        cursor: pointer;
+      }
+      .foot {
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        margin: 12px 0 0;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="phone">
+        <div class="status">
+          <span>Order IC-8K2M</span>
+          <span>Recovery</span>
+        </div>
+        <div class="body">
+          <div class="chip">Autonomous sidewalk robot</div>
+          <h1>Robot paused on Oak St.</h1>
+          <div class="card">
+            <p><strong>What happened:</strong> Your rover stopped short of a crowded crosswalk so our remote team could replan a safe path.</p>
+            <p><strong>What we’re doing:</strong> Rerouting on the sidewalk network now. Your groceries stay locked and monitored.</p>
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border)">
+              <div class="label">Updated arrival window</div>
+              <div class="eta-big">14–22 min · updating</div>
+            </div>
+          </div>
+          <button type="button" class="btn">Keep me posted</button>
+          <p class="foot">
+            If we can’t restart within 5 minutes, we’ll switch you to a shopper courier at no extra delivery charge — you’ll get a push
+            before that happens.
+          </p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
